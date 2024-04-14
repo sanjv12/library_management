@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>Librarian Dashboard</title>
+</head>
+<body> 
+    <div class="">
+        <div class="topbar">
+            <div class="leftitems">
+                <h4>Dashboard  </h4>
+                <h5>Welcome {{name}}</h5>
+            </div>
+            <div class="rightitems">
+                <a href="{{ url_for('stats_page') }}">Stats   </a>
+                <a href="{{ url_for('requests') }}">Requests  </a>
+                <a href="{{ url_for('logout') }}">Logout</a>
+            </div>    
+        </div>
+        <div class="section_bar">
+            <div id="addSectionForm" style="display: none;">
+                <form action="/add_section" method="POST">
+                    <label for="section_name">Section Name:</label><br>
+                    <input type="text" id="section_name" name="section_name"><br>
+                    <label for="section_description">Description:</label><br>
+                    <textarea id="section_description" name="section_description"></textarea><br>
+                    <input type="submit" value="Add Section">
+                </form>
+            </div>
+            <div class="content">
+                <!-- Display existing sections as cards -->
+                {% for section in sections %}
+                    <div class="card">
+                        <h3>ID: {{ section.id }}</h3>
+                        <h4>{{ section.name }}</h4>
+                        <p><strong>Date Created:</strong> {{ section.datecreate }}</p>
+                        <p>{{ section.description }}</p>
+                        <a href="{{ url_for('section_books', section_id=section.id) }}">view section</a>
+                    </div>
+                {% endfor %}
+                {% for section in sections %}
+            
+                {% endfor %}
+            </div>
+            <button onclick="showAddSectionForm()">Add New Section</button>
+        </div>
+    </div>    
+</body>
+<script>
+        function showAddSectionForm() {
+            var form = document.getElementById("addSectionForm");
+            if (form.style.display === "none") {
+                form.style.display = "block";
+            } else {
+                form.style.display = "none";
+            }
+        }
+</script>
+</html>

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>Librarian Dashboard</title>
+</head>
+<body> 
+    <div class="">
+        <div class="topbar">
+            <div class="leftitems">
+                <h4>Dashboard   </h4>
+                <h5>Welcome Admin</h5>
+            </div>
+            <div class="rightitems">
+                <a href="{{ url_for('stats_page') }}">Stats   </a>
+                <a href="{{ url_for('requests') }}">Requests {{number}}   </a>
+                <a href="{{ url_for('logout') }}">Logout</a>
+            </div>    
+        </div>
+        <div class="Book_bar">
+           
+
+            <div class="content">
+                {% for book in books %}
+                    <div class="card">
+                        <h3><strong>Title:</strong>{{ book.booktitle }}</h3>
+                        <p><strong>Author:</strong> {{ book.author }}</p>
+                        <p><strong>Content:</strong> {{ book.content }}</p>                        
+                    </div>
+                {% endfor %}
+            </div>
+        
+            <button onclick="showAddBookForm()">Add New Book</button>
+            
+            <div id="addBookForm" style="display: none;">
+
+            <form action="{{ url_for('add_book') }}" method="POST">
+                <input type="hidden" name="section_id" value="{{ section_id }}">
+                <label for="book_title">Title:</label><br>
+                <input type="text" id="book_title" name="book_title"><br>
+                <label for="book_author">Author:</label><br>
+                <input type="text" id="book_author" name="book_author"><br>
+                <label for="content">content:</label><br>
+                <input type="text" id="content" name="content"><br>
+                <input type="submit" value="Add Book">
+            </form>
+            </div>
+        </div>
+    </div>    
+</body>
+<script>
+        function showAddBookForm() {
+            var form = document.getElementById("addBookForm");
+            if (form.style.display === "none") {
+                form.style.display = "block";
+            } else {
+                form.style.display = "none";
+            }
+        }
+</script>
+</html>

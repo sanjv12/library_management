@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title></title>
+</head>
+<body>
+    <div class="">
+        <div class="topbar">
+            <div class="leftitems">
+                <h4>Dashboard  </h4>
+                <h5>Welcome {{name}}</h5>
+            </div>
+            <div class="rightitems">
+                <a href="{{ url_for('stats_page') }}">Stats   </a>
+                <a href="{{ url_for('requests') }}">Requests {{number}}   </a>
+                <a href="{{ url_for('logout') }}">Logout</a>
+            </div>    
+        </div>
+        <div class="content">
+
+            {% for request in requests %}
+            <div class="card">
+                <p>Request ID: {{request.id}} </p>
+                <p>Book title: {{request.booktitle}} </p>
+                <p>username: {{request.username}} </p>
+                <form action="/permissions" method="POST">
+                    <input type="hidden" name="request_id" value="{{ request.id }}">    
+                    <input type="hidden" name="booktitle" value="{{request.booktitle}}">
+                    <input type="hidden" name="username" value="{{request.username}}">
+                    <input type="submit" name="action" value="grant">
+                    <input type="submit" name="action" value="reject">
+                </form>
+            </div>
+            {% endfor %}
+        </div>
+        Granted Books:
+            {% for grant in grants %}
+            <div class="card">
+                <p>Request ID: {{grant.id}} </p>
+                <p>Book title: {{grant.booktitle}} </p>
+                <p>username: {{grant.username}} </p>
+                <p>Issue date: {{grant.issued}}</p>
+                <p>Return date: {{grant.return}}</p>
+                <form action="/revoke_book" method="POST">
+                    <input type="hidden" name="username" value="{{ grant.username }}">
+                    <input type="hidden" name="booktitle" value="{{ grant.booktitle }}">
+                    <input type="hidden" name="id" value="{{ grant.id }}">
+                    <input type="submit" name="action" value="revoke">
+                </form>   
+            </div>
+            {% endfor %}
+    </div>
+</body>
+</html>

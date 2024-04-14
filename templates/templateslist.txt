@@ -1,0 +1,16 @@
+Login page for Admin
+
+    Section page
+    + Add section details page
+    Book page 
+    + Add book page
+    Request's
+
+Login page for User
+    User's Books page
+    Book display page
+    Book's Request Revoke page
+
+Stats
+
+databases = 
