@@ -4,47 +4,76 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="icon" type="image/png" href="{{url_for('static',filename='logo.png')}}">
+    
     <title>Librarian Dashboard</title>
 </head>
-<body> 
+<body style="margin: 0;"> 
     <div class="">
         <div class="topbar">
             <div class="leftitems">
-                <h4>Dashboard   </h4>
-                <h5>Welcome Admin</h5>
+                <a href="{{url_for('librarian_dashboard')}}">Dashboard </a> 
+                <h3>Welcome Admin</h3>
             </div>
             <div class="rightitems">
-                <a href="{{ url_for('stats_page') }}">Stats   </a>
-                <a href="{{ url_for('requests') }}">Requests {{number}}   </a>
+                <a href="{{url_for('librarian_dashboard')}}">Home </a>
+                <a href="{{ url_for('adminstats') }}">Stats   </a>
+                <a href="{{ url_for('requests') }}">Requests  </a>
                 <a href="{{ url_for('logout') }}">Logout</a>
             </div>    
         </div>
-        <div class="Book_bar">
-           
-
-            <div class="content">
-                {% for book in books %}
-                    <div class="card">
-                        <h3><strong>Title:</strong>{{ book.booktitle }}</h3>
-                        <p><strong>Author:</strong> {{ book.author }}</p>
-                        <p><strong>Content:</strong> {{ book.content }}</p>                        
-                    </div>
-                {% endfor %}
+        <div class="books-container">
+            <h1 style="text-align: center; font-family: arial;">Books</h1>
+            <div class="book-search">
+            <form action = "/booksearch" method="POST">
+                <input type="hidden" name="section_id" value="{{ section_id }}">
+                <input type="text" name="search" placeholder="Search for a Books" class="txtbox">
+                <input type="submit" value="Search" class="searchbtn">
+            </form>
+                    {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                
+                    {% for message in messages %}
+                        {{ message }}</li>
+                    {% endfor %}
+                
+            {% endif %}
+        {% endwith %}
             </div>
-        
-            <button onclick="showAddBookForm()">Add New Book</button>
+            <div class="book-content">
+            <table>
+                <thread>
+                    <tr>
+                        <th>Title</th>
+                        <th>Author</th>
+                        <th>Content</th>
+                    </tr>
+                </thread>
+                <tbody>
+                    {% for book in books %}
+                        <tr>
+                             <td>{{ book.booktitle }}</h3></td>
+                             <td>{{ book.author }}</p></td>
+                             <td>{{ book.content }}</p></td>                    
+                        </tr>
+                    {% endfor %}
+                    
+                </tbody>
+            </table>
+            </div>
+            <div class="add-book-btn"> <button onclick="showAddBookForm()">Add New Book</button></div>
             
             <div id="addBookForm" style="display: none;">
 
             <form action="{{ url_for('add_book') }}" method="POST">
                 <input type="hidden" name="section_id" value="{{ section_id }}">
                 <label for="book_title">Title:</label><br>
-                <input type="text" id="book_title" name="book_title"><br>
+                <input type="text" id="book_title" name="book_title" class="txtbox"><br>
                 <label for="book_author">Author:</label><br>
-                <input type="text" id="book_author" name="book_author"><br>
+                <input type="text" id="book_author" name="book_author" class="txtbox"><br>
                 <label for="content">content:</label><br>
-                <input type="text" id="content" name="content"><br>
-                <input type="submit" value="Add Book">
+                <input type="text" id="content" name="content" class="txtbox"><br>
+                <input type="submit" value="Add Book" class="add-book-btn2">
             </form>
             </div>
         </div>

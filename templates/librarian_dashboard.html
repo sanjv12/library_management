@@ -5,46 +5,81 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <title>Librarian Dashboard</title>
+    <link rel="icon" type="image/png" href="{{url_for('static',filename='logo.png')}}">
+    
 </head>
-<body> 
+<body style="margin: 0;"> 
     <div class="">
+
         <div class="topbar">
             <div class="leftitems">
-                <h4>Dashboard  </h4>
-                <h5>Welcome {{name}}</h5>
+                <a href="{{url_for('librarian_dashboard')}}">Dashboard </a> 
+                <h3>Welcome Admin</h3>
             </div>
             <div class="rightitems">
-                <a href="{{ url_for('stats_page') }}">Stats   </a>
+                <a href="{{url_for('librarian_dashboard')}}">Home </a>
+                <a href="{{ url_for('adminstats') }}">Stats   </a>
                 <a href="{{ url_for('requests') }}">Requests  </a>
                 <a href="{{ url_for('logout') }}">Logout</a>
             </div>    
         </div>
-        <div class="section_bar">
+        
+        <div class="section-container">
+                <h1 style="text-align: center; font-family: arial;">Sections</h1>
+                <div class="section-search">
+                    <form action = "/sectionsearch" method="POST">
+                        <input type="text" name="search" placeholder="Search for a section" class="txtbox" style="margin-left: 5px;">
+                        <input type="submit" value="Search" class="searchbtn">
+                    </form>
+                    {% with messages = get_flashed_messages() %}
+                        {% if messages %}
+                            {% for message in messages %}
+                                {{ message }}
+                            {% endfor %}
+                        {% endif %}
+                    {% endwith %}
+                </div>
+                 <br>
+                 <div class="section-content">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Date Created</th>
+                                <th>Description</th>
+                                <th class="section-btns-data">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for section in sections %}
+                                <tr>
+                                    <td>{{ section.id }}</td>
+                                    <td>{{ section.name }}</td>
+                                    <td>{{ section.datecreate }}</td>
+                                    <td>{{ section.description }}</td>
+                                    <td class="section-btns-data">
+                                        <div class="section-btns">
+                                            <a href="{{ url_for('section_books', section_id=section.id) }}">View</a>
+                                            <a href="{{ url_for('remove_section', section_id=section.id) }}">Remove</a>
+                                        </div>    
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="add-section-btn"><button onclick="showAddSectionForm()">Add New Section</button></div>
             <div id="addSectionForm" style="display: none;">
+                
                 <form action="/add_section" method="POST">
                     <label for="section_name">Section Name:</label><br>
-                    <input type="text" id="section_name" name="section_name"><br>
+                    <input type="text" id="section_name" name="section_name" class="txtbox"><br>
                     <label for="section_description">Description:</label><br>
-                    <textarea id="section_description" name="section_description"></textarea><br>
-                    <input type="submit" value="Add Section">
+                    <textarea id="section_description" name="section_description" class="txtbox"></textarea><br>
+                    <input type="submit" value="Add Section" class="add-section-btn2">
                 </form>
             </div>
-            <div class="content">
-                <!-- Display existing sections as cards -->
-                {% for section in sections %}
-                    <div class="card">
-                        <h3>ID: {{ section.id }}</h3>
-                        <h4>{{ section.name }}</h4>
-                        <p><strong>Date Created:</strong> {{ section.datecreate }}</p>
-                        <p>{{ section.description }}</p>
-                        <a href="{{ url_for('section_books', section_id=section.id) }}">view section</a>
-                    </div>
-                {% endfor %}
-                {% for section in sections %}
-            
-                {% endfor %}
-            </div>
-            <button onclick="showAddSectionForm()">Add New Section</button>
         </div>
     </div>    
 </body>

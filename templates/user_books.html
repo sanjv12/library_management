@@ -5,8 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <title>My books</title>
+    <link rel="icon" type="image/png" href="{{url_for('static',filename='logo.png')}}">
+    
 </head>
-<body>
+<body style="margin: 0;">
     <div class="">
         <div class="topbar">
             <div class="leftitems">
@@ -15,32 +17,47 @@
             </div>
             <div class="rightitems">
                 <a href="{{url_for('user_dashboard',username=username)}}"> Books</a>
-                <form action="/user_books" method="POST">
+                <a href="{{url_for('user_books',username=username)}}"> My Books</a>
+                <!-- <form action="/user_books" method="POST">
                     <input type="hidden" name="username" value="{{username}}">
                     <input type="submit" name="action" value="My books">
-                </form>
-                <a href="{{ url_for('stats_page') }}">Stats   </a>
+                </form> -->
+                <a href="{{ url_for('userstats') }}">Stats   </a>
                 <a href="{{ url_for('logout') }}">Logout</a>
             </div>    
         </div>
-        <div class="content">
+        <div class="usercontent">
+            <h2>My Books</h2>
+            <table>
+                <thread>
+                    <tr>
+                        <th>Book Title</th>
+                        <th>Author</th>
+                        <th>Issue Date</th>
+                        <th>Return Date</th>
+                        <th>Section Id</th>
+                        <th>Actions</th>
+                    </tr>
+                </thread>
+                <tbody>
             {% for books in userbooks%}
-            <div class="card">
-                <p>Book Title: {{books.booktitle}}</p>
-                <p>Author: {{books.author}}</p>
-                <p>issue date : {{books.issued}}</p>
-                <p>return date: {{books.return}}</p>
-                <p>section: {{books.section_id}}</p>
+           
+                <td> {{books.booktitle}}  </td>
+                <td> {{books.author}}     </td>
+                <td> {{books.issued}}     </td>
+                <td> {{books.return}}     </td>
+                <td> {{books.section_id}} </td>
+                <td>
                 <form action="/return_book" method="POST">
                     <input type="hidden" name="username" value="{{username}}">
                     <input type="hidden" name="booktitle" value="{{books.booktitle}}">
                     <input type="hidden" name="id" value="{{books.id}}">
-                    <input type="submit" name="action" value="Return">
+                    <input type="submit" name="action" value="Return" class="request-btns-btn">
                 </form>
-                
-              </div>
+                </td>
+            </tbody>
             {% endfor %}
-            
+        </table>
         </div>
     </div>
     

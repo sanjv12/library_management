@@ -1,10 +1,11 @@
 from flask import Flask, render_template, request, redirect, url_for, flash ,session
 import sqlite3
 from datetime import datetime, timedelta
+from collections import Counter
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
-librarian_log_indetails={"admin":"admindapunda"}
+
 
 @app.route('/')
 def index():
@@ -71,7 +72,7 @@ def admin_loginfn():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
-        if request.form['action'] == 'Login':
+        if request.form['action'] == ' Login  ':
             if verify_login(username, password):
                 session[username] = username
                  #   flash('Login successful!', 'success')
@@ -91,7 +92,7 @@ def user_loginfn():
     if request.method =='POST':
         username = request.form['username']
         password = request.form['password']
-        if request.form['action'] == 'Login':
+        if request.form['action'] == ' Login  ':
             if verify_userlogin(username,password):
                 return redirect(url_for('user_dashboard',username=username))
             else:
@@ -108,10 +109,23 @@ def logout():
     session.pop('username', None)
     return render_template('index.html')
 
-@app.route('/stats_page')
-def stats_page():
-    return render_template('admin_stats.html')
+@app.route('/sectionsearch', methods=['POST'])
+def sectionsearch():
+    searchval = request.form.get('search')
+    if searchval == "":
+        flash('Please enter a search value', 'warning')
+        return redirect(url_for('librarian_dashboard'))
+    
+    conn = get_db_connection()
+    sections = conn.execute('SELECT * FROM section WHERE name LIKE ?', ('%' + searchval + '%',)).fetchall()
+    conn.close()
 
+    if len(sections) == 0:
+        flash('No results found for "{}"'.format(searchval), 'info')
+    else:
+        flash('Results for "{}" are shown'.format(searchval), 'success')
+    
+    return render_template('librarian_dashboard.html', sections=sections)
 
 @app.route('/librarian_dashboard')
 def librarian_dashboard():
@@ -148,6 +162,36 @@ def section_books(section_id):
     conn.close()
     print(books)
     return render_template('section_books.html', section_id=section_id, books=books)
+
+@app.route('/booksearch', methods=['POST'])
+def booksearch():
+    section_id = request.form.get('section_id')
+    searchval = request.form.get('search')
+    if searchval == "":
+        flash('Please enter a search value', 'warning')
+        return redirect(url_for('section_books', section_id=section_id))
+    
+    conn = get_db_connection()
+    books = conn.execute('SELECT * FROM books WHERE section_id = ? AND booktitle LIKE ?', (section_id, '%' + searchval + '%')).fetchall()
+    conn.close()
+    if len(books) == 0:
+        flash('No results found for "{}"'.format(searchval), 'info')
+    else:
+        flash('Results for "{}" are shown'.format(searchval), 'success')
+    
+    return render_template('section_books.html', section_id=section_id, books=books)
+
+@app.route('/remove_section/<int:section_id>')
+def remove_section(section_id):
+    conn = get_db_connection()
+    conn.execute('DELETE FROM section WHERE id = ? ',(section_id,))
+    conn.commit()
+    conn.execute('DELETE FROM books WHERE section_id=?',(section_id,))
+    conn.commit()
+    conn.execute('DELETE FROM userbooks WHERE section_id=?',(section_id,))
+    conn.commit()
+    conn.close()
+    return redirect(url_for('librarian_dashboard'))
 
 @app.route('/add_book', methods=['POST'])
 def add_book():
@@ -195,8 +239,8 @@ def permissions():
         print(username)
         
         conn = get_db_connection()
-        
-        if action == 'grant':
+
+        if action == 'Grant':
             # Retrieve author and section_id from the database
             author_row = conn.execute('SELECT author FROM books WHERE booktitle = ?', (book_title,)).fetchone()
             author = author_row[0] if author_row else None
@@ -205,8 +249,6 @@ def permissions():
             
             issue_date = datetime.now().date().strftime('%Y-%m-%d')
             return_date = (datetime.now() + timedelta(days=7)).date().strftime('%Y-%m-%d')
-            
-            
             conn.execute('INSERT INTO userbooks (booktitle, username, author, issued, return, section_id) VALUES (?, ?, ?, ?, ?, ?)',
                          (book_title, username, author, str(issue_date), str(return_date), section_id))
             conn.commit()
@@ -214,7 +256,7 @@ def permissions():
             conn.execute('INSERT INTO admingranted (booktitle, username, issued, return) VALUES (?, ?, ?, ?)',
                          (book_title, username, str(issue_date), str(return_date)))
             conn.commit()
-        
+            print("Successful")
         conn.execute('DELETE FROM request WHERE id = ?', (req_id,))
         conn.commit()
         conn.close()
@@ -262,6 +304,60 @@ def revoke_book():
     return redirect(url_for('requests'))
 
 
+@app.route('/adminstats')
+def adminstats():
+    # admin_stats = get_admin_stats()
+    # generate_admin_pie_chart(admin_stats)
+    return render_template('admin_stats.html')
+
+@app.route('/userstats')
+def userstats():
+    # user_book_stats = get_user_book_stats()
+    # generate_user_book_bar_graph(user_book_stats)
+    return render_template('user_stats.html')
+
+# def get_user_book_stats():
+#     conn = get_db_connection()
+#     user_books = conn.execute('SELECT username FROM userbooks').fetchall()
+#     conn.close()
+#     user_book_counts = Counter([book[0] for book in user_books])
+#     return user_book_counts
+
+
+# def get_admin_stats():
+#     conn = get_db_connection()
+#     admin_books = conn.execute('SELECT username FROM admingranted').fetchall()
+#     conn.close()
+#     admin_book_counts = Counter([book[0] for book in admin_books])
+#     return admin_book_counts
+
+
+# def generate_user_book_bar_graph(user_book_stats):
+#     usernames = list(user_book_stats.keys())
+#     book_counts = list(user_book_stats.values())
+
+#     plt.figure(figsize=(10, 6))
+#     plt.bar(usernames, book_counts, color='skyblue')
+#     plt.xlabel('Users')
+#     plt.ylabel('Number of Books')
+#     plt.title('User Book Stats')
+#     plt.xticks(rotation=45)
+#     plt.tight_layout()
+#     plt.savefig('static/user_book_stats.png')
+
+
+# def generate_admin_pie_chart(admin_stats):
+#     usernames = list(admin_stats.keys())
+#     book_counts = list(admin_stats.values())
+
+#     plt.figure(figsize=(8, 8))
+#     plt.pie(book_counts, labels=usernames, autopct='%1.1f%%', startangle=140)
+#     plt.title('Admin Stats')
+#     plt.axis('equal')
+#     plt.tight_layout()
+#     plt.savefig('static/admin_stats.png')
+
+    
 if __name__ == '__main__':
     create_table()
     app.run(debug=True)

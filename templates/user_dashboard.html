@@ -5,39 +5,51 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <title>User Dashboard</title>
+    <link rel="icon" type="image/png" href="{{url_for('static',filename='logo.png')}}">
+    
 </head>
-<body>
+<body style="margin: 0">
     <div class="">
         <div class="topbar">
             <div class="leftitems">
                 <h4>Dashboard   </h4>
-                <h5>Welcome {{username}}</h5>
+                <h4>Welcome {{username}}</h4>
             </div>
             <div class="rightitems">
                 <a href="{{url_for('user_dashboard',username=username)}}"> Books</a>
-                <form action="/user_books" method="POST">
-                    <input type="hidden" name="username" value="{{username}}">
-                    <input type="submit" name="action" value="My books">
-                </form>
-                <a href="{{ url_for('stats_page') }}">Stats   </a>
+                <a href="{{url_for('user_books',username=username)}}"> My Books</a>
+                <a href="{{ url_for('userstats') }}">Stats   </a>
                 <a href="{{ url_for('logout') }}">Logout</a>
             </div>    
         </div>
-        <div class="content">
+        <div class="usercontent">
+            <h2>Available books</h2>
+            <table>
+                <thread>
+                    <tr>
+                    <th>Book Title</th>
+                    <th>Author</th>
+                    <th>Content</th>
+                    <th>Section id</th>
+                    <th>Actions</th>
+                </tr>
+                </thread>
             {% for book in books %}
-            <div class="card">
-                <h3><strong>Title:</strong>{{ book.booktitle }}</h3>
-                <p><strong>Author:</strong> {{ book.author }}</p>
-                <p><strong>Content:</strong> {{ book.content }}</p>
-                <p><strong>Section id:</strong>{{ book.section_id}}</p>
+                <tbody>
+                 <td> {{ book.booktitle }}</td>
+                 <td> {{ book.author }}</td>  
+                <td> {{ book.content }}</td>
+                  <td> {{ book.section_id}}</td>
+                  <td>
                 <form method="POST" action="{{ url_for('user_requests')}}">
                     <input type="hidden" id="booktitle" name="booktitle" value="{{ book.booktitle }}">
                     <input type="hidden" id="username" name="username" value="{{ username }}">
-                    <button type="submit">Request book</button>
+                    <button type="submit" class="request-btns-btn">Request</button>
                 </form>
-                
-            </div>
+            </td>
+            </tbody>
             {% endfor %}
+        </table>
         </div>
     </div>
 </body>

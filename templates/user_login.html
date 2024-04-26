@@ -5,19 +5,30 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <title>Login Page</title>
+    <link rel="icon" type="image/png" href="{{url_for('static',filename='logo.png')}}">
+    
 </head>
-<body>
-    <h1>Login</h1>
-    <form action="user_loginfn" method="POST">
-        <label for="username">Username:</label><br>
-        <input type="text" id="username" name="username" required><br>
-    
-        <label for="password">Password:</label><br>
-        <input type="password" id="password" name="password" required><br><br>
-    
-        <input type="submit" name="action" value="Register">
-        <input type="submit" name="action" value="Login">
-    </form>
+<body style="margin: 0;">
+<div class="loginhtml">
+    <div class="login-container">
+        <div class="loginform" ><h1 style="color: #e7ecef; font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif; padding-bottom:20px;  ">LOGIN</h1></div>
+            <form action="user_loginfn" method="POST" class="login_form">
+                <div class="loginformtxt">
+                    <label for="username">Username:</label><br>
+                    <input type="text" id="username" name="username" class="txtbox" required><br>
+                </div>
+
+                <div class="loginformtxt">    
+                    <label for="password">Password:</label><br>
+                    <input type="password" id="password" name="password" class="txtbox" required><br><br>
+                </div>
+
+                <div class="loginformbtn">
+                    <input type="submit" name="action" value="Register" class="registerbtn">
+                    <input type="submit" name="action" value=" Login  " class="loginbtn">
+                </div>
+            </form>
+    </div>
     {% with messages = get_flashed_messages() %}
     {% if messages %}
 
@@ -27,5 +38,6 @@
     
     {% endif %}
     {% endwith %}
+</div>
 </body>
 </html>

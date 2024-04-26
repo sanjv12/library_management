@@ -3,15 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Flask Project</title>
+    <title>Library Management</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="icon" type="image/png" href="{{url_for('static',filename='logo.png')}}">
+    
 </head>
-<body>
-    <h1>Welcome to The Libaray</h1>
-    <p>FOR ADMIN LOGIN </p>
-    <a href="{{ url_for('adminlogin') }}">ADMIN LOGIN</a>
-    <br>
-    <p>FOR USER LOGIN </p>
-    <a href="{{ url_for('userlogin') }}">USER LOGIN</a>
+<body style="margin: 0; padding: 0;"><div class="indexhtml">
+    <!-- <h1 style="text-align: center;">Welcome to The Libaray System</h1> -->
+    <div class="main-index-container">
+        <div class="admin-card">
+        <p>ADMIN LOGIN</p>
+        <a href="{{ url_for('adminlogin') }}">ADMIN LOGIN</a>
+    </div>
+    <div class="user-card">
+        <p>USER LOGIN</p>
+        <a href="{{ url_for('userlogin') }}">USER LOGIN</a>
+    </div>
+    </div>
+</div>
 </body>
 </html>
